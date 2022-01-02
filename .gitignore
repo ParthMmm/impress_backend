@@ -158,3 +158,5 @@ config/dev.js
 deployment.yaml
 docker-compose.yaml
 service.yaml
+
+./dist

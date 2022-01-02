@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+  ts-node-docker:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: development-build-stage
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    container_name: ts-node-docker
+    restart: 'unless-stopped'
+    ports:
+      - '8000:8000'
+    networks:
+      - backend
+    links:
+      - postgresql
+    depends_on:
+      - postgresql
+    environment:
+      - DATABASE_URL=postgresql://parthmangrola:password@postgresql:5432/impress?schema=public
+  postgresql:
+    image: 'postgres:14'
+    container_name: postgresql
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=parthmangrola
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=impress
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  data:
+    driver: local
