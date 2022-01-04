@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { Routes } from 'interfaces/routes.interface';
 import AuthController from 'controllers/auth.controller';
+import { CreateUserDto } from '@dtos/users.dto';
+import validationMiddleware from '@middlewares/validation.middleware';
+import authMiddleware from '@middlewares/auth.middleware';
 
 class AuthRoute implements Routes {
   public path = '/auth/';
@@ -14,23 +17,19 @@ class AuthRoute implements Routes {
   private initializeRoutes() {
     this.router.post(
       `${this.path}signup`,
-      //   validationMiddleware(CreateUserDto, 'body'),
+      validationMiddleware(CreateUserDto, 'body'),
       this.authController.signUp
     );
-    this.router.get(
-      `${this.path}test`,
-      //   validationMiddleware(CreateUserDto, 'body'),
-      this.authController.test
-    ); // this.router.post(
-    //   `${this.path}login`,
-    //   validationMiddleware(CreateUserDto, 'body'),
-    //   this.authController.logIn
-    // );
-    // this.router.post(
-    //   `${this.path}logout`,
-    //   authMiddleware,
-    //   this.authController.logOut
-    // );
+    this.router.post(
+      `${this.path}login`,
+      validationMiddleware(CreateUserDto, 'body'),
+      this.authController.logIn
+    );
+    this.router.post(
+      `${this.path}logout`,
+      authMiddleware,
+      this.authController.logOut
+    );
   }
 }
 
