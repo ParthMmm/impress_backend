@@ -7,21 +7,13 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import morgan from 'morgan';
 import { ApolloServer, gql } from 'apollo-server-express';
-import {
-  ApolloServerPluginLandingPageProductionDefault,
-  ApolloServerPluginLandingPageLocalDefault,
-} from 'apollo-server-core';
-// import { buildSchema } from 'type-graphql';
+
 import { Prisma, PrismaClient } from '@prisma/client';
 import { User } from '@prisma/client';
 import AuthService from 'services/auth.service';
 import schema from './schema';
 import { Routes } from '@interfaces/routes.interface';
-// import errorMiddleware from '@middlewares/error.middleware';
-// import { logger, stream } from '@utils/logger';
-
-// import { Magic } from '@magic-sdk/admin';
-// const mAdmin = new Magic(process.env.SECRET_KEY); // ✨
+import authMiddleware from '@middlewares/auth.middleware';
 
 interface userSignUpInput {
   username: string;
@@ -79,7 +71,6 @@ class App {
     var corsOptions = {
       origin: [
         'http://localhost:3000/',
-
         'https://studio.apollographql.com',
         'localhost:3000/',
         '*',
@@ -147,6 +138,21 @@ class App {
 
     const apolloServer = new ApolloServer({
       schema: schema,
+      context: async ({ req, res }: any) => {
+        // const token = req.headers.authorization || req.cookies['Authorization'];
+
+        // Try to retrieve a user with the token
+        const user = await authMiddleware(req);
+        console.log('🧘', { user });
+        // Add the user to the context
+        // return { user };
+        // console.log(req.headers);
+        // console.log('🗝️', { token });
+        return { req, res, user };
+        // {
+        //   req, res;
+        // }
+      },
     });
     var corsOptions = {
       origin: [

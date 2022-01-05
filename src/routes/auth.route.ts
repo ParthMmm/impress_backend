@@ -3,7 +3,7 @@ import { Routes } from 'interfaces/routes.interface';
 import AuthController from 'controllers/auth.controller';
 import { CreateUserDto } from '@dtos/users.dto';
 import validationMiddleware from '@middlewares/validation.middleware';
-import authMiddleware from '@middlewares/auth.middleware';
+// import authMiddleware from '@middlewares/auth.middleware';
 
 class AuthRoute implements Routes {
   public path = '/auth/';
@@ -27,7 +27,7 @@ class AuthRoute implements Routes {
     );
     this.router.post(
       `${this.path}logout`,
-      authMiddleware,
+      //   authMiddleware,
       this.authController.logOut
     );
   }

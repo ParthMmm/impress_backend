@@ -12,7 +12,10 @@ const authService = new AuthService();
 
 const resolvers = {
   Query: {
-    allUsers: (_parent, _args) => {
+    allUsers: (_parent, _args, context) => {
+      if (!context.user) {
+        return null;
+      }
       return prisma.user.findMany();
     },
   },
@@ -21,9 +24,15 @@ const resolvers = {
       const signUpUserData: User = await authService.signup(args);
       return signUpUserData;
     },
-    logIn: async (_parent, args: { username: string; password: string }) => {
+    logIn: async (
+      _parent,
+      args: { username: string; password: string },
+      { res }
+    ) => {
       const { cookie, findUser } = await authService.login(args);
       console.log(cookie);
+      res.setHeader('Set-Cookie', [cookie]);
+      // res.set('impress-auth', cookie);
       return findUser;
     },
   },

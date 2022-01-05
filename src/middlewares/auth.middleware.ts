@@ -5,11 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, RequestWithUser } from '@interfaces/auth.interface';
 
-const authMiddleware = async (
-  req: RequestWithUser,
-  res: Response,
-  next: NextFunction
-) => {
+const authMiddleware = async (req) => {
   try {
     const Authorization =
       req.cookies['Authorization'] ||
@@ -31,17 +27,26 @@ const authMiddleware = async (
       });
 
       if (findUser) {
-        req.user = findUser;
-        next();
+        // req.user = findUser;
+        return findUser;
+        // next();
       } else {
-        next(new HttpException(401, 'Wrong authentication token'));
+        return false;
+        // next(new HttpException(401, 'Wrong authentication token'));
       }
     } else {
-      next(new HttpException(404, 'Authentication token missing'));
+      return false;
+      //   next(new HttpException(404, 'Authentication token missing'));
     }
   } catch (error) {
-    next(new HttpException(401, 'Wrong authentication token'));
+    return false;
+    // next(new HttpException(401, 'Wrong authentication token'));
   }
 };
+
+// export const authChecker = async ({ context: { user } }) => {
+//     if (!user) {
+//       throw new HttpException(404, 'Authentication token missing');
+//     }
 
 export default authMiddleware;
