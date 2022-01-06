@@ -6,11 +6,12 @@ interface userSignUpInput {
 }
 const typeDefs = gql`
   type User {
+    id: Int
     username: String
     password: String
   }
   type Query {
-    allUsers: [User!]!
+    currentUser: User!
   }
   type Mutation {
     signUp(username: String, password: String): User
@@ -25,4 +26,4 @@ const typeDefs = gql`
   }
 `;
 
-module.exports = typeDefs;
+export default typeDefs;

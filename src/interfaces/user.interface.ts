@@ -6,5 +6,5 @@ export interface User {
 // export interface userList {
 //   users: User[];
 // }
-export type sanitizedUser = Pick<User, 'username' | 'id'>[];
+export type sanitizedUser = Omit<User, 'password'>;
 // export type sanitizedUser = <User>[]

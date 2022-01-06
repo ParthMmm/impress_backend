@@ -11,15 +11,10 @@ class AuthService {
   public users = new PrismaClient().user;
 
   public async signup(userData): Promise<User> {
-    // let userData = {
-    //   username: 'pog',
-    //   password: 'password',
-    // };
     const findUser: User = await this.users.findUnique({
       where: { username: userData.username },
     });
 
-    // if(findUser)
     if (findUser)
       throw new HttpException(
         409,
@@ -49,8 +44,8 @@ class AuthService {
       userData.password,
       findUser.password
     );
-    if (!isPasswordMatching)
-      throw new HttpException(409, "You're password not matching");
+
+    if (!isPasswordMatching) throw new HttpException(409, 'Wrong password');
 
     const tokenData = this.createToken(findUser);
     const cookie = this.createCookie(tokenData);

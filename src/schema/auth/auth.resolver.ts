@@ -1,3 +1,4 @@
+import { sanitizedUser } from '@/interfaces/user.interface';
 import AuthService from '@services/auth.service';
 import { ApolloServer, gql } from 'apollo-server-express';
 import { Prisma, PrismaClient, User } from '@prisma/client';
@@ -7,22 +8,36 @@ interface userSignUpInput {
   password: string;
 }
 
+// interface sanitizedUser
+
 const prisma = new PrismaClient();
 const authService = new AuthService();
 
 const resolvers = {
   Query: {
-    allUsers: (_parent, _args, context) => {
+    currentUser: (_parent, _args, context) => {
       if (!context.user) {
         return null;
       }
-      return prisma.user.findMany();
+      console.log('🥷, yo');
+      return context.user as sanitizedUser;
     },
   },
   Mutation: {
-    signUp: async (_parent, args: { username: string; password: string }) => {
+    signUp: async (
+      _parent,
+      args: { username: string; password: string },
+      { res }
+    ) => {
       const signUpUserData: User = await authService.signup(args);
-      return signUpUserData;
+
+      if (signUpUserData) {
+        const { cookie, findUser } = await authService.login(args);
+        res.setHeader('Set-Cookie', [cookie]);
+
+        return findUser as sanitizedUser;
+      }
+      return;
     },
     logIn: async (
       _parent,
@@ -30,7 +45,6 @@ const resolvers = {
       { res }
     ) => {
       const { cookie, findUser } = await authService.login(args);
-      console.log(cookie);
       res.setHeader('Set-Cookie', [cookie]);
       // res.set('impress-auth', cookie);
       return findUser;
