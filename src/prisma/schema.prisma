@@ -10,11 +10,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id       Int    @id @default(autoincrement())
+  id       String @id @default(uuid())
   username String @unique
   password String
+  posts    Post[]
 }
 
+model Lube {
+  id   Int    @id @default(autoincrement())
+  name String
+}
 
+model Film {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Post {
+  id          String     @id @default(uuid())
+  createdAt   DateTime   @default(now())
+  title       String
+  description String
+  author      User       @relation(fields: [authorId], references: [id])
+  authorId    String
+  tags        PostTags[]
+
+}
+
+model PostTags {
+  id     String  @id @default(uuid())
+  type   String
+  lube   String
+  film   String
+  Post   Post?   @relation(fields: [postId], references: [id])
+  postId String?
+}

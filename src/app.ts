@@ -8,27 +8,19 @@ import hpp from 'hpp';
 import morgan from 'morgan';
 import { ApolloServer, gql } from 'apollo-server-express';
 
-import { Prisma, PrismaClient } from '@prisma/client';
-import { User } from '@prisma/client';
 import AuthService from 'services/auth.service';
 import schema from './schema';
 import { Routes } from '@interfaces/routes.interface';
 import authMiddleware from '@middlewares/auth.middleware';
-
-interface userSignUpInput {
-  username: string;
-  password: string;
-}
+import errorMiddleware from '@middlewares/error.middleware';
+import { logger, responseLogger, errorLogger } from '@utils/logger';
 
 class App {
   public app: express.Application;
   public port: string | number;
   public env: string;
 
-  public prisma = new PrismaClient();
-  public authService = new AuthService();
-
-  constructor(routes: Routes[]) {
+  constructor() {
     this.app = express();
     this.port = process.env.PORT || 8000;
     this.env = process.env.NODE_ENV || 'development';
@@ -37,18 +29,18 @@ class App {
 
     this.initApolloServer();
 
-    this.initializeRoutes(routes);
+    // this.initializeRoutes(routes);
 
-    // this.initializeErrorHandling();
+    this.initializeErrorHandling();
   }
   public listen() {
     this.app.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
       console.log(`🎮 http://localhost:${this.port}/graphql`);
-      //   logger.info(`=================================`);
-      //   logger.info(`======= ENV: ${this.env} =======`);
-      //   logger.info(`🚀 App listening on the port ${this.port}`);
-      //   logger.info(`=================================`);
+      logger.info(`=================================`);
+      logger.info(`======= ENV: ${this.env} =======`);
+      logger.info(`🚀 App listening on the port ${this.port}`);
+      logger.info(`=================================`);
     });
   }
 
@@ -68,6 +60,8 @@ class App {
     // this.app.use(helmet());
     // this.app.use(compression());
     // this.app.use(cors);
+    this.app.use(cookieParser());
+
     var corsOptions = {
       origin: [
         'http://localhost:3000/',
@@ -108,7 +102,7 @@ class App {
     // this.app.options('http://localhost:3000/', cors());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(cookieParser());
+    // this.app.use(cookieParser());
   }
 
   private initializeRoutes(routes: Routes[]) {
@@ -117,41 +111,23 @@ class App {
     });
   }
   private async initApolloServer() {
-    //     const typeDefs = `
-    //   type Mutation {
-    //     signUp(username: String!, password: String!)
-    //   }
-    //   type User {
-    //     username: String!
-    //     name: String
-    //   }
-    //   type Query {
-    //     allUsers: [User!]!
-    //   }
-    // `;
-
-    // const resolvers = {
-    //   Query: {
-    //     hello: () => 'Hello world!',
-    //   },
-    // };
-
     const apolloServer = new ApolloServer({
       schema: schema,
       context: async ({ req, res }: any) => {
-        // const token = req.headers.authorization || req.cookies['Authorization'];
-
-        // Try to retrieve a user with the token
         const user = await authMiddleware(req);
-        console.log('🧘', { user });
-        // Add the user to the context
-        // return { user };
-        // console.log(req.headers);
-        // console.log('🗝️', { token });
+        // console.log('🧘', { user });
+
         return { req, res, user };
-        // {
-        //   req, res;
-        // }
+      },
+      // formatResponse: (response, request) => {
+      //   responseLogger(request);
+
+      //   return response;
+      // },
+      formatError: (error) => {
+        errorLogger(error);
+
+        return error;
       },
     });
     var corsOptions = {
@@ -170,9 +146,9 @@ class App {
       cors: false,
     });
   }
-  //   private initializeErrorHandling() {
-  //     this.app.use(errorMiddleware);
-  //   }
+  private initializeErrorHandling() {
+    this.app.use(errorMiddleware);
+  }
 }
 
 export default App;

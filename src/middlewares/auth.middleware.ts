@@ -23,7 +23,7 @@ const authMiddleware = async (req) => {
 
       const users = new PrismaClient().user;
       const findUser = await users.findUnique({
-        where: { id: Number(userId) },
+        where: { id: String(userId) },
       });
 
       if (findUser) {

@@ -20,7 +20,7 @@ const logFormat = winston.format.printf(
  * Log Level
  * error: 0, warn: 1, info: 2, http: 3, verbose: 4, debug: 5, silly: 6
  */
-const logger = winston.createLogger({
+export const logger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss',
@@ -61,10 +61,22 @@ logger.add(
   })
 );
 
-const stream = {
-  write: (message: string) => {
-    logger.info(message.substring(0, message.lastIndexOf('\n')));
-  },
+export const responseLogger = (request) => {
+  const { query } = request.request;
+  logger.info(query);
 };
 
-export { logger, stream };
+export const errorLogger = (error) => {
+  const { validationErrors } = error.extensions.exception;
+
+  let message = '';
+  if (validationErrors) {
+    message = validationErrors
+      .map((error) => Object.values(error.constraints))
+      .join(', ');
+  } else {
+    message = error.message;
+  }
+
+  logger.error(message);
+};

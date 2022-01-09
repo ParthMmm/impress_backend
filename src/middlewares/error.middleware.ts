@@ -11,7 +11,7 @@ const errorMiddleware = (
   try {
     const status: number = error.status || 500;
     const message: string = error.message || 'Something went wrong';
-
+    console.log(status, message);
     logger.error(
       `[${req.method}] ${req.path} >> StatusCode:: ${status}, Message:: ${message}`
     );

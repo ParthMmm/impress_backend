@@ -1,26 +1,30 @@
 import { sanitizedUser } from '@/interfaces/user.interface';
 import AuthService from '@services/auth.service';
-import { ApolloServer, gql } from 'apollo-server-express';
-import { Prisma, PrismaClient, User } from '@prisma/client';
+import { User } from '@prisma/client';
 
 interface userSignUpInput {
   username: string;
   password: string;
 }
 
-// interface sanitizedUser
-
-const prisma = new PrismaClient();
 const authService = new AuthService();
 
 const resolvers = {
   Query: {
     currentUser: (_parent, _args, context) => {
+      let x: sanitizedUser = {
+        id: null,
+        username: null,
+      };
       if (!context.user) {
-        return null;
+        return x;
       }
-      console.log('🥷, yo');
+      // console.log(context.user);
+      // console.log('🥷, yo');
       return context.user as sanitizedUser;
+    },
+    test: async (_parent, _args, context) => {
+      return '👋yo';
     },
   },
   Mutation: {
@@ -45,10 +49,44 @@ const resolvers = {
       { res }
     ) => {
       const { cookie, findUser } = await authService.login(args);
-      res.setHeader('Set-Cookie', [cookie]);
+
+      res.cookie(cookie);
+      // res.setHeader('Set-Cookie', [cookie]);
       // res.set('impress-auth', cookie);
       return findUser;
     },
+    logOut: async (_parent, _args, context, { res }) => {
+      let x: sanitizedUser = {
+        id: null,
+        username: null,
+      };
+      if (!context.user) {
+        return null;
+      }
+      const { cookie, findUser } = await authService.logout(context.user);
+      console.log(':cookie:');
+      console.log({ cookie }, { findUser });
+
+      // res.setHeader('Set-Cookie', [cookie]);
+      // if (cookie) {
+      context.res.cookie(
+        `Authorization=deleted; HttpOnly; expires=Thu, 01 Jan 1970 00:00:00 GMT`
+      );
+      // }
+      return null;
+    },
+    // logOut: async (_parent, _args, context, { res }) => {
+    //   if (!context.user) {
+    //     return null;
+    //   }
+    //   const { cookie, findUser } = await authService.logout(context.user);
+
+    //   console.log({ cookie }, { findUser });
+
+    //   // res.setHeader('Set-Cookie', [cookie]);
+    //   res.cookie(cookie);
+    //   return { message: 'logged out' };
+    // },
   },
 };
 

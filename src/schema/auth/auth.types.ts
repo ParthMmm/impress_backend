@@ -1,4 +1,4 @@
-import { ApolloServer, gql } from 'apollo-server-express';
+import { gql } from 'apollo-server-express';
 
 interface userSignUpInput {
   username: string;
@@ -6,18 +6,18 @@ interface userSignUpInput {
 }
 const typeDefs = gql`
   type User {
-    id: Int
+    id: String
     username: String
     password: String
   }
   type Query {
     currentUser: User!
+    test: String
   }
   type Mutation {
     signUp(username: String, password: String): User
-  }
-  type Mutation {
     logIn(username: String, password: String): User
+    logOut: User
   }
 
   input userSignUpInput {

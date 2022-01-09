@@ -6,12 +6,11 @@ import { CreateUserDto } from '@dtos/users.dto';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { isEmpty } from '@utils/util';
+import prisma from '@/utils/client';
 
 class AuthService {
-  public users = new PrismaClient().user;
-
   public async signup(userData): Promise<User> {
-    const findUser: User = await this.users.findUnique({
+    const findUser: User = await prisma.user.findUnique({
       where: { username: userData.username },
     });
 
@@ -21,7 +20,7 @@ class AuthService {
         `You're username ${userData.username} already exists`
       );
     const hashedPassword = await hash(userData.password, 10);
-    const createUserData: Promise<User> = this.users.create({
+    const createUserData: Promise<User> = prisma.user.create({
       data: { ...userData, password: hashedPassword },
     });
 
@@ -29,7 +28,7 @@ class AuthService {
   }
 
   public async login(userData): Promise<{ cookie: string; findUser: User }> {
-    const findUser: User = await this.users.findUnique({
+    const findUser: User = await prisma.user.findUnique({
       where: { username: userData.username },
     });
 
@@ -53,15 +52,20 @@ class AuthService {
     return { cookie, findUser };
   }
 
-  public async logout(userData: User): Promise<User> {
+  public async logout(
+    userData: User
+  ): Promise<{ cookie: string; findUser: User }> {
     if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
 
-    const findUser: User = await this.users.findFirst({
+    const findUser: User = await prisma.user.findFirst({
       where: { username: userData.username, password: userData.password },
     });
     if (!findUser) throw new HttpException(409, "You're not user");
 
-    return findUser;
+    // const tokenData = this.deleteToken(findUser);
+    const cookie = this.deleteCookie();
+
+    return { cookie, findUser };
   }
 
   public createToken(user: User): TokenData {
@@ -75,8 +79,23 @@ class AuthService {
     };
   }
 
+  public deleteToken(user: User): TokenData {
+    const dataStoredInToken: DataStoredInToken = { id: user.id };
+    const secretKey: string = config.get('secretKey');
+    const expiresIn: number = 0;
+
+    return {
+      expiresIn,
+      token: sign(dataStoredInToken, secretKey, { expiresIn }),
+    };
+  }
+
   public createCookie(tokenData: TokenData): string {
     return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
+  }
+
+  public deleteCookie(): string {
+    return `Authorization=""; HttpOnly; Max-Age=0;`;
   }
 }
 
