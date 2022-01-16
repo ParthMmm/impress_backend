@@ -1,12 +1,14 @@
 import { gql } from 'apollo-server-express';
+import { Upload } from 'graphql-upload';
 
 const typeDefs = gql`
+  scalar Upload
   type Query {
     getPost: Post
   }
 
   type Mutation {
-    createPost(post: PostInput!): id
+    createPost(post: PostInput): id
   }
 
   type Post {
@@ -28,6 +30,7 @@ const typeDefs = gql`
   }
   type id {
     id: String
+    title: String
   }
 `;
 

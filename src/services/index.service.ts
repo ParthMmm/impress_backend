@@ -1,11 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import { User } from '@/interfaces/user.interface';
-
+import prisma from '@/utils/client';
 class IndexService {
-  public users = new PrismaClient().user;
+  // public users = new PrismaClient().user;
 
   public async test(): Promise<User[]> {
-    const users: User[] = await this.users.findMany({
+    const users: User[] = await prisma.user.findMany({
       select: { username: true, id: true },
     });
 

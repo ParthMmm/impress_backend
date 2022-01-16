@@ -1,5 +1,10 @@
 # Common build stage
-FROM node:14.14.0-alpine3.12 as common-build-stage
+
+
+FROM node:16-slim as common-build-stage
+
+RUN apt-get update
+RUN apt-get install -y openssl
 
 COPY . ./app
 

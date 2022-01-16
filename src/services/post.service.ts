@@ -1,4 +1,4 @@
-import { compare, hash } from 'bcrypt';
+import { compare, hash } from 'bcryptjs';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
@@ -9,6 +9,7 @@ import { isEmpty } from '@utils/util';
 import prisma from '@/utils/client';
 import { Post } from '@/interfaces/post.interface';
 import { User } from '@/interfaces/user.interface';
+import uploadFile from '@/utils/bucket';
 
 interface Props {
   data: Post;
@@ -16,13 +17,6 @@ interface Props {
 }
 class PostService {
   public async createPost(data: Post, userData: User) {
-    // const x = await prisma.user.create({
-    //   data: {
-    //     posts: {},
-    //   },
-    // });
-    console.log('📫', data);
-
     const findUser = await prisma.user.findUnique({
       where: { username: userData.username },
     });
@@ -38,6 +32,7 @@ class PostService {
           create: {
             title: data.title,
             description: data.description,
+            file_: data.file_,
             tags: {
               create: { type: data.type, lube: data.lube, film: data.film },
             },
@@ -62,13 +57,13 @@ class PostService {
           take: 1,
           select: {
             id: true,
+            title: true,
           },
         },
       },
     });
-    console.log(post.posts.find((x) => x.id));
 
-    return post.posts.find((x) => x.id);
+    return post.posts.find((x) => x);
   }
 }
 

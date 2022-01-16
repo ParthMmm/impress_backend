@@ -35,6 +35,7 @@ model Post {
   author      User       @relation(fields: [authorId], references: [id])
   authorId    String
   tags        PostTags[]
+  file_        String
 
 }
 

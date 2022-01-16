@@ -1,5 +1,7 @@
 import PostService from '@/services/post.service';
 import { Post, User } from '@prisma/client';
+import { HttpException } from '@exceptions/HttpException';
+import { Upload } from 'graphql-upload';
 
 const postService = new PostService();
 
@@ -11,13 +13,11 @@ const resolvers = {
   Mutation: {
     createPost: async (_parent, _args, context) => {
       if (context.user) {
-        console.log('📮', _args, context.user);
-
         const post = await postService.createPost(_args.post, context.user);
-        // console.log('📮', _args, context.user);
         return post;
+      } else {
+        throw new HttpException(409, `not auth`);
       }
-      console.log('📮📮', _parent, _args);
     },
   },
 };

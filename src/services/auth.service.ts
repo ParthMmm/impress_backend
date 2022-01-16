@@ -1,4 +1,4 @@
-import { compare, hash } from 'bcrypt';
+import { compare, hash } from 'bcryptjs';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
 import { PrismaClient, User } from '@prisma/client';

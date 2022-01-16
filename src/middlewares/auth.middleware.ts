@@ -4,6 +4,7 @@ import { verify } from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, RequestWithUser } from '@interfaces/auth.interface';
+import prisma from '@/utils/client';
 
 const authMiddleware = async (req) => {
   try {
@@ -21,8 +22,8 @@ const authMiddleware = async (req) => {
       )) as DataStoredInToken;
       const userId = verificationResponse.id;
 
-      const users = new PrismaClient().user;
-      const findUser = await users.findUnique({
+      // const users = new PrismaClient().user;
+      const findUser = await prisma.user.findUnique({
         where: { id: String(userId) },
       });
 
