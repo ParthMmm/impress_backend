@@ -65,6 +65,14 @@ class PostService {
 
     return post.posts.find((x) => x);
   }
+
+  public async fetchPosts() {
+    const posts = await prisma.post.findMany({
+      include: { author: true, tags: true },
+    });
+
+    return posts;
+  }
 }
 
 export default PostService;

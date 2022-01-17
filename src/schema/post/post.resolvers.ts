@@ -7,7 +7,10 @@ const postService = new PostService();
 
 const resolvers = {
   Query: {
-    getPost: (_args, context) => {},
+    getPosts: async (_args, context) => {
+      const posts = await postService.fetchPosts();
+      return posts;
+    },
   },
 
   Mutation: {

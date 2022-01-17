@@ -1,10 +1,12 @@
+import { IsString } from 'class-validator';
 import { gql } from 'apollo-server-express';
 import { Upload } from 'graphql-upload';
 
 const typeDefs = gql`
   scalar Upload
+  scalar Date
   type Query {
-    getPost: Post
+    getPosts: [DataPost]
   }
 
   type Mutation {
@@ -31,6 +33,28 @@ const typeDefs = gql`
   type id {
     id: String
     title: String
+  }
+
+  type DataPost {
+    id: String
+    title: String
+    description: String
+    author: User
+    createdAt: Date
+    file_: String
+    tags: [Tag]
+  }
+
+  type Tag {
+    id: String
+    type: String
+    lube: String
+    film: String
+  }
+
+  type User {
+    id: String
+    user: String
   }
 `;
 
