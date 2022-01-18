@@ -71,7 +71,33 @@ class PostService {
       include: { author: true, tags: true },
     });
 
+    console.log(posts);
+
     return posts;
+  }
+
+  public async likePost(id: string) {
+    const post = await prisma.post.update({
+      where: {
+        id: id,
+      },
+      data: {
+        likes: { increment: 1 },
+      },
+    });
+    return post;
+  }
+
+  public async dislikePost(id: string) {
+    const post = await prisma.post.update({
+      where: {
+        id: id,
+      },
+      data: {
+        likes: { decrement: 1 },
+      },
+    });
+    return post;
   }
 }
 

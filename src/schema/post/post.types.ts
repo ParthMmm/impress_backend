@@ -1,3 +1,4 @@
+import { Tag } from './../../../../client/generates';
 import { IsString } from 'class-validator';
 import { gql } from 'apollo-server-express';
 import { Upload } from 'graphql-upload';
@@ -11,6 +12,8 @@ const typeDefs = gql`
 
   type Mutation {
     createPost(post: PostInput): id
+    likePost(id: String): String
+    dislikePost(id: String): String
   }
 
   type Post {
@@ -43,6 +46,8 @@ const typeDefs = gql`
     createdAt: Date
     file_: String
     tags: [Tag]
+    likes: Int
+    dislikes: Int
   }
 
   type Tag {

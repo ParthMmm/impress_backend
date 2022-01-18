@@ -22,6 +22,23 @@ const resolvers = {
         throw new HttpException(409, `not auth`);
       }
     },
+    likePost: async (_parent, _args, context) => {
+      // if (context.user) {
+      //   const post = await postService.likePost(_args);
+      //   return post;
+      // } else {
+      //   throw new HttpException(409, `not auth`);
+      // }
+      // console.log(_args.id);
+      const post = await postService.likePost(_args.id);
+      return post.likes;
+    },
+    dislikePost: async (_parent, _args, context) => {
+      if (context.user) {
+      } else {
+        throw new HttpException(409, `not auth`);
+      }
+    },
   },
 };
 
