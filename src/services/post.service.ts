@@ -15,6 +15,11 @@ interface Props {
   data: Post;
   userData: User;
 }
+
+interface Pagination {
+  range: number;
+  starting: number;
+}
 class PostService {
   public async createPost(data: Post, userData: User) {
     const findUser = await prisma.user.findUnique({
@@ -66,12 +71,16 @@ class PostService {
     return post.posts.find((x) => x);
   }
 
-  public async fetchPosts() {
+  public async fetchPosts({ range }: Pagination) {
+    // console.log({ x });
     const posts = await prisma.post.findMany({
+      skip: range,
+      take: 5,
       include: { author: true, tags: true },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
-
-    console.log(posts);
 
     return posts;
   }

@@ -7,7 +7,7 @@ const typeDefs = gql`
   scalar Upload
   scalar Date
   type Query {
-    getPosts: [DataPost]
+    getPosts(range: Int): [DataPost]
   }
 
   type Mutation {

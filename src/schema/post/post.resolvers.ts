@@ -7,8 +7,8 @@ const postService = new PostService();
 
 const resolvers = {
   Query: {
-    getPosts: async (_args, context) => {
-      const posts = await postService.fetchPosts();
+    getPosts: async (_parent, _args, context) => {
+      const posts = await postService.fetchPosts(_args);
       return posts;
     },
   },
