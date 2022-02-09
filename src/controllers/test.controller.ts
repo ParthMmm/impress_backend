@@ -5,8 +5,8 @@ import IndexService from '@/services/index.service';
 
 import { User, sanitizedUser } from '@/interfaces/user.interface';
 
-class IndexController {
-  // public IndexService = new IndexService();
+class TestController {
+  //   public IndexService = new IndexService();
 
   public index = async (
     req: Request,
@@ -14,11 +14,11 @@ class IndexController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      res.send({ message: 'hi' });
+      res.send({ message: 'test' });
     } catch (error) {
       next(error);
     }
   };
 }
 
-export default IndexController;
+export default TestController;

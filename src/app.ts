@@ -14,6 +14,8 @@ import { Routes } from '@interfaces/routes.interface';
 import authMiddleware from '@middlewares/auth.middleware';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, responseLogger, errorLogger } from '@utils/logger';
+import IndexRoute from '@routes/index.route';
+import TestRoute from '@routes/test.route';
 
 class App {
   public app: express.Application;
@@ -29,7 +31,7 @@ class App {
 
     this.initApolloServer();
 
-    // this.initializeRoutes(routes);
+    this.initializeRoutes();
 
     this.initializeErrorHandling();
   }
@@ -105,9 +107,19 @@ class App {
     // this.app.use(cookieParser());
   }
 
-  private initializeRoutes(routes: Routes[]) {
-    routes.forEach((route) => {
-      this.app.use('/', route.router);
+  // private initializeRoutes(routes: Routes[]) {
+  //   routes.forEach((route) => {
+  //     this.app.use('/', route.router);
+  //   });
+  // }
+
+  private initializeRoutes() {
+    this.app.get('/', (req, res) => {
+      res.send('Welcome to impress!');
+    });
+
+    this.app.get('/test', (req, res) => {
+      res.send('test');
     });
   }
   private async initApolloServer() {

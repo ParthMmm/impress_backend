@@ -11,6 +11,16 @@ const resolvers = {
       const posts = await postService.fetchPosts(_args);
       return posts;
     },
+
+    getSinglePost: async (_parent, _args, context) => {
+      const post = await postService.getSinglePost(_args.id);
+      return post;
+    },
+
+    getTotalPosts: async (_parent, context) => {
+      const total = await postService.totalPosts();
+      return total;
+    },
   },
 
   Mutation: {

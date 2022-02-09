@@ -1,13 +1,14 @@
-import { Tag } from './../../../../client/generates';
+// import { Tag, DataPost } from './../../../../client/generates';
 import { IsString } from 'class-validator';
 import { gql } from 'apollo-server-express';
 import { Upload } from 'graphql-upload';
 
 const typeDefs = gql`
-  scalar Upload
   scalar Date
   type Query {
     getPosts(range: Int): [DataPost]
+    getSinglePost(id: String): DataPost
+    getTotalPosts: Int
   }
 
   type Mutation {
@@ -45,16 +46,16 @@ const typeDefs = gql`
     author: User
     createdAt: Date
     file_: String
-    tags: [Tag]
     likes: Int
     dislikes: Int
+    film: Tag
+    lube: Tag
+    type: Tag
   }
 
   type Tag {
-    id: String
-    type: String
-    lube: String
-    film: String
+    id: Int
+    name: String
   }
 
   type User {

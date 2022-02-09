@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,6 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // shadowDatabaseUrl = env("SHADOW_DB")
 }
 
 model User {
@@ -19,33 +17,55 @@ model User {
 
 model Lube {
   id   Int    @id @default(autoincrement())
-  name String
+  name String @unique
+  Post Post[]
 }
 
 model Film {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  posts Post[]
+}
+
+model Type {
   id   Int    @id @default(autoincrement())
-  name String
+  name String @unique
+  Post Post[]
 }
 
 model Post {
-  id          String     @id @default(uuid())
-  createdAt   DateTime   @default(now())
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
   title       String
   description String
-  author      User       @relation(fields: [authorId], references: [id])
   authorId    String
-  tags        PostTags[]
-  file_        String
-  likes       Int @default(0)
-  dislikes    Int @default(0)
-
+  file_       String
+  dislikes    Int      @default(0)
+  likes       Int      @default(0)
+  author      User     @relation(fields: [authorId], references: [id])
+  film        Film     @relation(fields: [filmId], references: [id])
+  lube        Lube     @relation(fields: [lubeId], references: [id])
+  type        Type     @relation(fields: [typeId], references: [id])
+  filmId      Int
+  lubeId      Int
+  typeId      Int
 }
 
-model PostTags {
-  id     String  @id @default(uuid())
-  type   String
-  lube   String
-  film    String
-  Post   Post   @relation(fields: [postId], references: [id])
-  postId String
-}
+// model FilmOnPosts {
+
+//   Film   Film?  @relation(fields: [filmId], references: [id])
+//   filmId Int
+//   Post   Post?  @relation(fields: [postId], references: [id])
+//   postId String
+
+//   @@id([postId, filmId])
+// }
+
+// model PostTags {
+//   id     String @id @default(uuid())
+//   type   String
+//   lube   String
+//   film   String
+//   postId String
+//   Post   Post   @relation(fields: [postId], references: [id])
+// }
