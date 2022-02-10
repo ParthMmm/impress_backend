@@ -84,8 +84,6 @@ class PostService {
       },
     });
 
-    console.log(x);
-
     if (!x) {
       throw new HttpException(409, `error creating post`);
     }

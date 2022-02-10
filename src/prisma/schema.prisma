@@ -16,9 +16,9 @@ model User {
 }
 
 model Lube {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  Post Post[]
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  posts Post[]
 }
 
 model Film {
@@ -28,9 +28,9 @@ model Film {
 }
 
 model Type {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  Post Post[]
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  posts Post[]
 }
 
 model Post {

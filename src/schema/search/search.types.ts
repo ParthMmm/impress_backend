@@ -5,6 +5,8 @@ const typeDefs = gql`
 
   type Query {
     getByType(type: String): [DataPost]
+    getByLube(lube: String): [DataPost]
+    getByFilm(film: String): [DataPost]
   }
   type DataPost {
     id: String
@@ -13,9 +15,11 @@ const typeDefs = gql`
     author: User
     createdAt: Date
     file_: String
-    tags: [Tag]
     likes: Int
     dislikes: Int
+    film: Tag
+    lube: Tag
+    type: Tag
   }
 `;
 
